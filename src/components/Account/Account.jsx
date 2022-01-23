@@ -1,3 +1,4 @@
+import { useMoralis } from "react-moralis";
 import { Button } from "antd";
 const styles = {
   account: {
@@ -35,20 +36,31 @@ const styles = {
 };
 
 function Account() {
-  return (
-    <>
-      <div>
-        <p style={styles.text}>Authenticate</p>
-      </div>
-    </>
-  );
+  const { authenticate, isAuthenticated, account, logout } = useMoralis();
+  if (!isAuthenticated || !account) {
+    return (
+      <>
+        <div
+          onClick={async () => {
+            try {
+              await authenticate({
+                onComplete: () => alert("Congrats for authorising with us"),
+              });
+            } catch (e) {
+              console.error(e);
+            }
+          }}
+        >
+          <p style={styles.text}>Authenticate</p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <div style={styles.account}>
-        <p style={{ marginRight: "5px", ...styles.text }}>
-          0xa890f3Fa407576E6649D488091eB91CAE48d872g
-        </p>
+        <p style={{ marginRight: "5px", ...styles.text }}>{account}</p>
       </div>
       <Button
         size="large"
@@ -58,6 +70,9 @@ function Account() {
           borderRadius: "0.5rem",
           fontSize: "16px",
           fontWeight: "500",
+        }}
+        onClick={async () => {
+          await logout();
         }}
       >
         Disconnect Wallet

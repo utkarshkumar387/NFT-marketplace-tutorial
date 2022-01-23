@@ -1,3 +1,4 @@
+import { useMoralis } from "react-moralis";
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,6 +10,7 @@ import Chains from "./components/Chains/Chains";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 import NativeBalance from "./components/NativeBalance";
+import { useEffect } from "react";
 const { Header } = Layout;
 
 const styles = {
@@ -42,6 +44,11 @@ const styles = {
   },
 };
 const App = () => {
+  const { isWeb3Enabled, enableWeb3, isAutheticated, isWeb3EnableLoading } =
+    useMoralis();
+  useEffect(() => {
+    if (isAutheticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
+  }, [isAutheticated, isWeb3Enabled, isWeb3EnableLoading]);
   return (
     <Layout style={{ height: "100vh", overflow: "auto" }}>
       <Router>

@@ -1,6 +1,8 @@
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { PolygonLogo, ETHLogo } from "./Logos";
+import { useChain, useMoralis } from "react-moralis";
+import { useState, useEffect } from "react";
 
 const styles = {
   item: {
@@ -52,8 +54,19 @@ const menuItems = [
 ];
 
 function Chains() {
+  const { switchNetwork, chainId, chain } = useChain();
+  const { isAuthenticated } = useMoralis();
+  const [selected, setSelected] = useState();
+
+  useEffect(() => {
+    if (!chainId) return null;
+    const newSelectedChainId = menuItems.find((item) => item.key === chainId);
+    setSelected(newSelectedChainId);
+  }, [chainId]);
+
   const handleMenuClick = (e) => {
     console.log("switch to: ", e.key);
+    switchNetwork(e.key);
   };
 
   const menu = (
@@ -66,15 +79,17 @@ function Chains() {
     </Menu>
   );
 
+  if (!chainId || !isAuthenticated) return null;
+
   return (
     <div>
       <Dropdown overlay={menu} trigger={["click"]}>
         <Button
-          key="0x4"
-          icon={<ETHLogo />}
+          key={selected?.key}
+          icon={selected?.icon}
           style={{ ...styles.button, ...styles.item }}
         >
-          <span style={{ marginLeft: "5px" }}>Rinkeby Testnet</span>
+          <span style={{ marginLeft: "5px" }}>{selected?.value}</span>
           <DownOutlined />
         </Button>
       </Dropdown>
