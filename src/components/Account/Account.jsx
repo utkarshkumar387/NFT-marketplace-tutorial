@@ -40,19 +40,28 @@ function Account() {
   if (!isAuthenticated || !account) {
     return (
       <>
-        <div
+        <Button
+          size="large"
+          type="primary"
+          style={{
+            width: "100%",
+            borderRadius: "0.5rem",
+            fontSize: "16px",
+            fontWeight: "500",
+          }}
           onClick={async () => {
             try {
               await authenticate({
-                onComplete: () => alert("Congrats for authorising with us"),
+                onComplete: () =>
+                  alert("Congratulation for authenticating with us 🎉"),
               });
             } catch (e) {
               console.error(e);
             }
           }}
         >
-          <p style={styles.text}>Authenticate</p>
-        </div>
+          Connect Wallet
+        </Button>
       </>
     );
   }
