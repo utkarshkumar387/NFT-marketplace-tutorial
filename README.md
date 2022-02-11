@@ -37,8 +37,8 @@ To deploy this project run
 
 ## Tech Stack
 
-**Client:** React, AntDesign
+**Languages:** React, Solidity
 
-**Tools:** IPFS, Moralis, Remix
+**Tools:** IPFS, Moralis, Remix, AntDesign
 
 **Network:** Polygon
