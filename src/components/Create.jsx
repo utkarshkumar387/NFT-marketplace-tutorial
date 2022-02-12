@@ -88,7 +88,7 @@ function Create({
             }}
             rules={[{ required: true }]}
           >
-            <Input inputFieldView />
+            <Input />
           </Form.Item>
 
           <Form.Item label="Image" name="Image" rules={[{ required: true }]}>

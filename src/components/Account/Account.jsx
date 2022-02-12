@@ -37,7 +37,7 @@ const styles = {
 
 function Account() {
   const { authenticate, isAuthenticated, account, logout } = useMoralis();
-  if (!isAuthenticated || !account) {
+  if (!isAuthenticated) {
     return (
       <>
         <Button
@@ -51,10 +51,7 @@ function Account() {
           }}
           onClick={async () => {
             try {
-              await authenticate({
-                onComplete: () =>
-                  alert("Congratulation for authenticating with us 🎉"),
-              });
+              await authenticate();
             } catch (e) {
               console.error(e);
             }

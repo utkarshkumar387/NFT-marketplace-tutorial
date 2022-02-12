@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import nftabi from "./eSamudaayNFT_abi.json";
-import { ethers } from "ethers";
+// import nftabi from "./eSamudaayNFT_abi.json";
+// import { ethers } from "ethers";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Account from "./components/Account/Account";
 import Chains from "./components/Chains/Chains";
@@ -56,7 +56,7 @@ const App = () => {
   const [nftName, setNftName] = useState("");
   const [nftDescription, setNftDescription] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // const nft_contract_address = "0xbD361be724f586b6Ae91Bc5ca651F63A8bA4FDcd";
+  // const nft_contract_address = "0xEA7de57A552762fa3ee6866ea2f86ab784e2211d";
 
   const handleSetNftDescription = (desc) => {
     setNftDescription(desc);
@@ -87,7 +87,6 @@ const App = () => {
     }
     return true;
   };
-
   // const uploadDataOnIpfs = async () => {
   //   let imageFile;
   //   let metadataURI;
