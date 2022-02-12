@@ -38,16 +38,13 @@ function Create({
           fontSize: "16px",
           fontWeight: "500",
         }}
-        // onClick={async () => {
-        //   try {
-        //     await authenticate({
-        //       onComplete: () =>
-        //         alert("Congratulation for authenticating with us 🎉"),
-        //     });
-        //   } catch (e) {
-        //     console.error(e);
-        //   }
-        // }}
+        onClick={async () => {
+          try {
+            await authenticate();
+          } catch (e) {
+            console.error(e);
+          }
+        }}
       >
         Connect Wallet
       </Button>
