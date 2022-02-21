@@ -6,7 +6,7 @@ function Create({
   onHandleSetNftDescription,
   onHandleSetNftName,
   onHandleSetSelectedImage,
-  //   onHandleMintNft,
+  onHandleMintNft,
   nftName,
   nftDescription,
   selectedImage,
@@ -22,7 +22,7 @@ function Create({
           fontSize: "16px",
           fontWeight: "500",
         }}
-        // onClick={() => onHandleMintNft()}
+        onClick={() => onHandleMintNft()}
       >
         Submit
       </Button>

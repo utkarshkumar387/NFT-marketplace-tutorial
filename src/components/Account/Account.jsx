@@ -37,7 +37,7 @@ const styles = {
 
 function Account() {
   const { authenticate, isAuthenticated, account, logout } = useMoralis();
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !account) {
     return (
       <>
         <Button
