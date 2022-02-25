@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import nftabi from "./eSamudaayNFT_abi.json";
+import nftmarketabi from "./eSamudaayNFTMarket.json";
 import { ethers } from "ethers";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
+  useHistory,
 } from "react-router-dom";
 import Account from "./components/Account/Account";
 import Chains from "./components/Chains/Chains";
@@ -15,8 +16,11 @@ import "antd/dist/antd.css";
 import NativeBalance from "./components/NativeBalance";
 import Create from "./components/Create";
 import Home from "./components/Home";
+import CreatedNFT from "./components/CreatedNFT";
+import MyNFT from "./components/MyNFT";
 import MenuItems from "./components/MenuItems";
 import Modal from "antd/lib/modal/Modal";
+import { nftaddress, nftmarketaddress } from "./config";
 const { Header } = Layout;
 
 const styles = {
@@ -60,9 +64,9 @@ const App = () => {
   const [selectedImage, setSelectedImage] = useState("");
   const [nftName, setNftName] = useState("");
   const [nftDescription, setNftDescription] = useState("");
+  const [nftAmount, setNftAmount] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // const nft_contract_address = "0xC3Dcb46298D22A9B4F1Ba32A6068527b42916a64";
-  const nft_contract_address = "0xbD361be724f586b6Ae91Bc5ca651F63A8bA4FDcd";
+  let history = useHistory();
 
   const handleSetNftDescription = (desc) => {
     setNftDescription(desc);
@@ -74,6 +78,10 @@ const App = () => {
 
   const handleSetSelectedImage = (image) => {
     setSelectedImage(image);
+  };
+
+  const handleSetNftAmount = (amount) => {
+    setNftAmount(amount);
   };
 
   const handleOk = () => {
@@ -89,6 +97,9 @@ const App = () => {
       return false;
     } else if (!selectedImage) {
       message.info("Please insert nft image");
+      return false;
+    } else if (!nftAmount) {
+      message.info("Please insert nft Amount");
       return false;
     }
     return true;
@@ -122,13 +133,34 @@ const App = () => {
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
-        const connectedContract = new ethers.Contract(
-          nft_contract_address,
+        let connectedContract = new ethers.Contract(
+          nftaddress,
           nftabi.abi,
           signer
         );
-        let nftTxn = await connectedContract.mintToken(_uri);
-        console.log(`transaction => ${nftTxn}`);
+        let nftTxn = await connectedContract.createToken(_uri);
+        let txn = await nftTxn.wait();
+        let event = txn.events[0];
+        let value = event.args[2];
+        let tokenId = value.toNumber();
+        const price = ethers.utils.parseUnits(nftAmount, "ether");
+        connectedContract = new ethers.Contract(
+          nftmarketaddress,
+          nftmarketabi.abi,
+          signer
+        );
+        let listingPrice = await connectedContract.getListingPrice();
+        listingPrice = listingPrice.toString();
+        //create nft item
+        nftTxn = await connectedContract.createMarketItem(
+          nftaddress,
+          tokenId,
+          price,
+          {
+            value: listingPrice,
+          }
+        );
+        await nftTxn.wait();
         if (nftTxn) {
           setIsModalVisible(true);
         }
@@ -153,7 +185,8 @@ const App = () => {
   return (
     <Layout style={{ height: "100vh", overflow: "auto" }}>
       <Modal visible={isModalVisible} onOk={handleOk}>
-        <h3>Your NFT is minted successfully!!</h3>
+        <h3>Your NFT is listed successfully!!</h3>
+        <h3>Please navigate to home to view it.</h3>
       </Modal>
       <Router>
         <Header style={styles.header}>
@@ -166,11 +199,14 @@ const App = () => {
         </Header>
         <div style={styles.content}>
           <Switch>
-            <Route exact path="/">
-              <Redirect to="/Home" />
-            </Route>
             <Route path="/Home">
               <Home />
+            </Route>
+            <Route path="/myNFT">
+              <MyNFT />
+            </Route>
+            <Route path="/createdNFT">
+              <CreatedNFT />
             </Route>
             <Route path="/Create">
               <Create
@@ -181,6 +217,8 @@ const App = () => {
                 selectedImage={selectedImage}
                 nftName={nftName}
                 nftDescription={nftDescription}
+                nftAmount={nftAmount}
+                onHandleSetNftAmount={handleSetNftAmount}
               />
             </Route>
           </Switch>

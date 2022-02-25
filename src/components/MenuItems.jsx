@@ -1,6 +1,6 @@
 import { useLocation } from "react-router";
 import { Menu } from "antd";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function MenuItems() {
   const { pathname } = useLocation();
@@ -18,11 +18,17 @@ function MenuItems() {
       }}
       defaultSelectedKeys={[pathname]}
     >
-      <Menu.Item key="/Home">
-        <NavLink to="/Home">Home</NavLink>
+      <Menu.Item key="/">
+        <Link to="/Home">Home</Link>
+      </Menu.Item>
+      <Menu.Item key="/myNFT">
+        <Link to="/myNFT">My NFT</Link>
+      </Menu.Item>
+      <Menu.Item key="/createdNFT">
+        <Link to="/createdNFT">Created NFT</Link>
       </Menu.Item>
       <Menu.Item key="/Create">
-        <NavLink to="/Create">Create</NavLink>
+        <Link to="/Create">Create</Link>
       </Menu.Item>
     </Menu>
   );

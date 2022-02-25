@@ -10,6 +10,8 @@ function Create({
   nftName,
   nftDescription,
   selectedImage,
+  nftAmount,
+  onHandleSetNftAmount,
 }) {
   const { authenticate, isAuthenticated, account } = useMoralis();
 
@@ -85,7 +87,7 @@ function Create({
             }}
             rules={[{ required: true }]}
           >
-            <Input />
+            <Input inputFieldView />
           </Form.Item>
 
           <Form.Item label="Image" name="Image" rules={[{ required: true }]}>
@@ -97,6 +99,17 @@ function Create({
                 onHandleSetSelectedImage(event.target.files[0]);
               }}
             />
+          </Form.Item>
+          <Form.Item
+            label="Amount"
+            name="Amount"
+            value={nftAmount}
+            onChange={(event) => {
+              onHandleSetNftAmount(event.target.value);
+            }}
+            rules={[{ required: true }]}
+          >
+            <Input inputFieldView />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             {!isAuthenticated || !account

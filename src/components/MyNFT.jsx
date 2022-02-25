@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ethers } from "ethers";
-import { Card, Image, Button, Divider } from "antd";
+import { Card, Image, Divider } from "antd";
 import { nftaddress, nftmarketaddress } from "../config";
 import NFT from "../eSamudaayNFT_abi.json";
 import Market from "../eSamudaayNFTMarket.json";
@@ -20,65 +20,57 @@ const styles = {
     gap: "10px",
   },
 };
-function Home() {
+function MyNFT() {
   const [nfts, setNfts] = useState([]);
   useEffect(() => {
     loadNFTs();
   }, []);
 
   async function loadNFTs() {
-    const provider = new ethers.providers.JsonRpcProvider(
-      "https://rpc-mumbai.maticvigil.com"
-    );
-    const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
-    const marketContract = new ethers.Contract(
-      nftmarketaddress,
-      Market.abi,
-      provider
-    );
-    const data = await marketContract.fetchMarketItems();
-
-    const items = await Promise.all(
-      data.map(async (index) => {
-        const tokenUri = await tokenContract.tokenURI(index.tokenId);
-        const meta = await axios.get(tokenUri);
-        let price = ethers.utils.formatUnits(index.price.toString(), "ether");
-        let item = {
-          price,
-          itemId: index.itemId.toNumber(),
-          seller: index.seller,
-          owner: index.owner,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-        };
-        return item;
-      })
-    );
-    setNfts(items);
-  }
-  async function buyNft(nft) {
     try {
       const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
-        const connectedContract = new ethers.Contract(
+
+        const marketContract = new ethers.Contract(
           nftmarketaddress,
           Market.abi,
           signer
         );
-
-        const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-        const nftTxn = await connectedContract.createMarketSale(
+        const tokenContract = new ethers.Contract(
           nftaddress,
-          nft.itemId,
-          {
-            value: price,
-          }
+          NFT.abi,
+          provider
         );
-        await nftTxn.wait();
-        loadNFTs();
+        const data = await marketContract.fetchMyNFTs();
+        console.log(`data is => ${data}`);
+
+        const items = await Promise.all(
+          data.map(async (index) => {
+            console.log(
+              `token iD is => ${index.tokenId}, seller is => ${index.seller}, owner is => ${index.owner}`
+            );
+            const tokenUri = await tokenContract.tokenURI(index.tokenId);
+            console.log(`tokenUri => ${tokenUri}`);
+            const metaData = await axios.get(tokenUri);
+            console.log(`metaData => ${JSON.stringify(metaData)}`);
+            let price = ethers.utils.formatUnits(
+              index.price.toString(),
+              "ether"
+            );
+            let item = {
+              price,
+              tokenId: index.tokenId.toNumber(),
+              seller: index.seller,
+              owner: index.owner,
+              name: metaData.data.name,
+              image: metaData.data.image,
+            };
+            return item;
+          })
+        );
+        setNfts(items);
       } else {
         console.log("Ethereum object doesn't exist!");
       }
@@ -88,7 +80,7 @@ function Home() {
   }
   return (
     <div style={{ padding: "15px", maxWidth: "1030px", width: "100%" }}>
-      <h1>Explore NFTs</h1>
+      <h1>My NFTs</h1>
       <Divider />
       <div style={styles.NFTs}>
         {nfts &&
@@ -96,24 +88,7 @@ function Home() {
             return (
               <Card
                 hoverable
-                actions={[
-                  <Button
-                    style={{
-                      width: "90%",
-                      borderRadius: "0.5rem",
-                      fontSize: "16px",
-                      fontWeight: "500",
-                    }}
-                    onClick={() => buyNft(nft)}
-                    type="primary"
-                  >
-                    Buy
-                  </Button>,
-                ]}
-                style={{
-                  width: 240,
-                  border: "2px solid #e7eaf3",
-                }}
+                style={{ width: 240, border: "2px solid #e7eaf3" }}
                 cover={
                   <Image
                     preview={false}
@@ -134,4 +109,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default MyNFT;

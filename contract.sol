@@ -1,23 +1,26 @@
-// // SPDX-License-Identifier: MIT
-// pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// pragma solidity ^0.8.3;
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/utils/Counters.sol";
+// import "@openzeppelin/contracts/utils/Counters.sol";
+// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-// contract MyNFT is ERC721URIStorage {
+// contract NFT is ERC721URIStorage {
 //     using Counters for Counters.Counter;
-
 //     Counters.Counter private _tokenIds;
+//     address contractAddress;
 
-//     constructor() ERC721("MYNFT", "TNFT") {}
+//     constructor() ERC721("Metaverse Tokens", "METT") {
+//         contractAddress = 0xcAdcC53759B44ad80e521fF3dB25456A58991C16;
+//     }
 
 //     function mintToken(string memory tokenURI) public returns (uint256) {
 //         _tokenIds.increment();
-
 //         uint256 newItemId = _tokenIds.current();
+
 //         _mint(msg.sender, newItemId);
 //         _setTokenURI(newItemId, tokenURI);
-
+//         setApprovalForAll(contractAddress, true);
 //         return newItemId;
 //     }
 // }
