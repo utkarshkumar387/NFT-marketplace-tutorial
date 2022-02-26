@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useMoralis } from "react-moralis";
 import { ethers } from "ethers";
 import { Card, Image, Button, Divider } from "antd";
 import { nftaddress, nftmarketaddress } from "../config";
@@ -25,6 +26,8 @@ function Home() {
   useEffect(() => {
     loadNFTs();
   }, []);
+
+  const { authenticate, isAuthenticated, account } = useMoralis();
 
   async function loadNFTs() {
     const provider = new ethers.providers.JsonRpcProvider(
@@ -96,20 +99,21 @@ function Home() {
             return (
               <Card
                 hoverable
-                actions={[
-                  <Button
-                    style={{
-                      width: "90%",
-                      borderRadius: "0.5rem",
-                      fontSize: "16px",
-                      fontWeight: "500",
-                    }}
-                    onClick={() => buyNft(nft)}
-                    type="primary"
-                  >
-                    Buy
-                  </Button>,
-                ]}
+                // {!isAuthenticated || !account}
+                // actions={[
+                //   <Button
+                //     style={{
+                //       width: "90%",
+                //       borderRadius: "0.5rem",
+                //       fontSize: "16px",
+                //       fontWeight: "500",
+                //     }}
+                //     onClick={() => buyNft(nft)}
+                //     type="primary"
+                //   >
+                //     Buy
+                //   </Button>,
+                // ]}
                 style={{
                   width: 240,
                   border: "2px solid #e7eaf3",
@@ -126,6 +130,41 @@ function Home() {
                 key={index}
               >
                 <Meta title={nft.name} description={`${nft.price} MATIC`} />
+                <Divider />
+                {!isAuthenticated || !account ? (
+                  <Button
+                    size="large"
+                    type="primary"
+                    style={{
+                      width: "100%",
+                      borderRadius: "0.5rem",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                    }}
+                    onClick={async () => {
+                      try {
+                        await authenticate();
+                      } catch (e) {
+                        console.error(e);
+                      }
+                    }}
+                  >
+                    Connect Wallet
+                  </Button>
+                ) : (
+                  <Button
+                    style={{
+                      width: "100%",
+                      borderRadius: "0.5rem",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                    }}
+                    onClick={() => buyNft(nft)}
+                    type="primary"
+                  >
+                    Buy
+                  </Button>
+                )}
               </Card>
             );
           })}
